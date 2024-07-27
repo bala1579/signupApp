@@ -1,4 +1,5 @@
 import express from 'express';
+import path from 'path'
 import dotenv from 'dotenv';
   dotenv.config();
   import cookieParser from 'cookie-parser';
@@ -20,10 +21,26 @@ app.use(express.urlencoded({extended : true}));         // thats allow form data
 app.use(cookieParser());
 app.use('/api/users' , userRoutes);
 
-// app.get('/' , (req , res) =>
-// {
-//     res.send("server is running ")
-// });
+
+
+
+if(process.env.NODE_ENV === 'production')
+{
+  const __dirname = path.resolve();
+  app.use(express.static(path.join(__dirname , 'frontend/dist')));
+
+  app.get('*' , (res, req)=> res.sendFile(path.resolve(__dirname , 'frontend' , 'dist' , 'index.html')))
+}
+
+else{
+  app.get('/' , (req , res) =>
+    {
+        res.send("server is running ")
+    });
+
+}
+
+
 
 // app.use(notFound);
 // app.use(errorHandler);
